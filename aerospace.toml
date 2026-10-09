@@ -1,0 +1,151 @@
+# ~/.config/aerospace/aerospace.toml
+# Equivalent of the old skhd + yabai setup, ported to AeroSpace.
+#
+# IMPORTANT MAPPING NOTES (things that don't translate 1:1):
+#
+#  * AeroSpace cannot bind the `fn` key. Everything that used `fn`
+#    in skhd is mapped to `ctrl` here, and `fn + shift` -> `ctrl + shift`.
+#    (Easy to change: find/replace below.)
+#    NOTE: `ctrl - a` / `ctrl - d` will clash with Emacs-style
+#    line-start/line-end in terminals/kitty. Rebind if that bites.
+#
+#  * AeroSpace workspaces are predefined/virtual (NOT macOS Spaces).
+#    They are created on demand, so skhd's "create space" / "destroy
+#    space" (ctrl+shift-n / alt+shift-n) have no equivalent and are dropped.
+#
+#  * No `sticky` windows (yabai alt+shift-f) — dropped.
+#  * No per-workspace "float layout" toggle (yabai ctrl+shift-f) — dropped;
+#    use per-window float (alt-f) instead.
+#  * No focus-follows-mouse, no mouse_modifier drag-resize, no skhd
+#    app blacklist — AeroSpace has no equivalents.
+#  * The right_padding "show desktop" hack (alt+shift-left/right) is dropped.
+
+#############
+## general ##
+#############
+
+start-at-login = true
+
+# yabai: layout bsp  ->  tiles with auto orientation (bsp-like)
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+
+# Keep automatic container flattening (good default for a bsp-like feel)
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+# accordion gap (used by the "stacking" bindings below)
+accordion-padding = 30
+
+[key-mapping]
+preset = 'qwerty'
+
+##########
+## gaps ##
+##########
+# yabai: window_gap 5, top 7, bottom 5, left 5, right 5
+# yabai external_bar main:30:0 reserved 30px at the top for a bar.
+# outer.top is 7 + 30 = 37 to keep room for a top bar (sketchybar/Übersicht).
+# If you have no top bar, drop this back to 7.
+[gaps]
+inner.horizontal = 5
+inner.vertical   = 5
+outer.left       = 5
+outer.bottom     = 5
+outer.top        = 37
+outer.right      = 5
+
+####################
+## main key binds ##
+####################
+[mode.main.binding]
+
+#  --- open apps (skhd) ---
+cmd-enter       = 'exec-and-forget open -na Firefox'
+cmd-shift-enter = 'exec-and-forget open -na kitty'
+alt-enter       = 'exec-and-forget open -na "Google Chrome" --args --profile-directory=Default'
+alt-shift-enter = 'exec-and-forget open -a Typora'
+
+#  --- focus workspace  (was fn - N) ---
+ctrl-1 = 'workspace 1'
+ctrl-2 = 'workspace 2'
+ctrl-3 = 'workspace 3'
+ctrl-4 = 'workspace 4'
+ctrl-5 = 'workspace 5'
+ctrl-6 = 'workspace 6'
+ctrl-7 = 'workspace 7'
+ctrl-8 = 'workspace 8'
+ctrl-9 = 'workspace 9'
+ctrl-a = 'workspace --wrap-around prev'   # was fn - a (prev)
+ctrl-d = 'workspace --wrap-around next'   # was fn - d (next)
+ctrl-0 = 'workspace-back-and-forth'       # was fn - 0 (recent)
+
+#  --- send window to workspace and follow focus  (was fn + shift - N) ---
+ctrl-shift-1 = 'move-node-to-workspace --focus-follows-window 1'
+ctrl-shift-2 = 'move-node-to-workspace --focus-follows-window 2'
+ctrl-shift-3 = 'move-node-to-workspace --focus-follows-window 3'
+ctrl-shift-4 = 'move-node-to-workspace --focus-follows-window 4'
+ctrl-shift-5 = 'move-node-to-workspace --focus-follows-window 5'
+ctrl-shift-6 = 'move-node-to-workspace --focus-follows-window 6'
+ctrl-shift-7 = 'move-node-to-workspace --focus-follows-window 7'
+ctrl-shift-8 = 'move-node-to-workspace --focus-follows-window 8'
+ctrl-shift-9 = 'move-node-to-workspace --focus-follows-window 9'
+ctrl-shift-a = 'move-node-to-workspace --wrap-around --focus-follows-window prev'
+ctrl-shift-d = 'move-node-to-workspace --wrap-around --focus-follows-window next'
+# (fn+shift-0 "move to recent space" has no equivalent and is dropped)
+
+#  --- send window to monitor and follow focus  (was ctrl - home/end) ---
+ctrl-home = 'move-node-to-monitor --focus-follows-window 1'
+ctrl-end  = 'move-node-to-monitor --focus-follows-window 2'
+
+#  --- move window  (yabai --warp, was alt - arrows) ---
+alt-left  = 'move left'
+alt-down  = 'move down'
+alt-up    = 'move up'
+alt-right = 'move right'
+
+#  --- window properties ---
+alt-f       = 'layout floating tiling'          # toggle float (alt - f)
+alt-shift-s = 'layout tiles horizontal vertical' # toggle split direction (alt+shift-s)
+alt-b       = 'balance-sizes'                     # balance all windows (alt - b)
+
+#  --- stacking (closest AeroSpace concept is accordion) ---
+alt-s         = 'layout accordion tiles'  # toggle stack/accordion (alt - s)
+alt-tab       = 'focus right'             # approximates stack.next (alt - tab)
+alt-shift-tab = 'focus left'              # approximates stack.prev (alt+shift-tab)
+
+#  --- reload config  (was fn+shift-r restart yabai) ---
+ctrl-shift-r = 'reload-config'
+
+#########################################
+## window rules (yabai manage=off)     ##
+## -> start these floating on detect   ##
+#########################################
+
+[[on-window-detected]]
+if.app-name-regex-substring-matches = 'Archive Utility'
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-name-regex-substring-matches = 'Installer'
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-name-regex-substring-matches = 'Calculator'
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-name-regex-substring-matches = 'Photo Booth'
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-name-regex-substring-matches = 'zoom'   # was ^.oom.*$
+run = ['layout floating']
+
+[[on-window-detected]]
+if.app-name-regex-substring-matches = 'darktable'
+run = ['layout floating']
+
+[[on-window-detected]]
+if.window-title-regex-substring-matches = 'Alert$'
+run = ['layout floating']
